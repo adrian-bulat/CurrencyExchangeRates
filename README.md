@@ -36,23 +36,29 @@ Ensure you have the following installed:
    cp .env.example .env
    php artisan key:generate
    ```
-4. **Run Migrations & Seeders:**
+4. **Configure Database connection**
+   ```sh
+    DB_DATABASE=
+    DB_USERNAME=
+    DB_PASSWORD=
+   ```
+5. **Run Migrations & Seeders:**
    ```sh
    php artisan migrate --seed
    ```
-5. **Generate JWT Secret Key:**
+6. **Generate JWT Secret Key:**
    ```sh
    php artisan jwt:secret
    ```
-6. **Start the Application:**
+7. **Start the Application:**
    ```sh
    php artisan serve
    ```
 
 ## Usage
-- **Admin Panel:** `/admin` (secured with Filament authentication)
-- **User Registration:** Access `/register` to begin interacting with the application.
-- **User Login:** If you already have credentials, access `/login`.
+- **Admin Panel:** `http://127.0.0.1:8000/admin` (secured with Filament authentication)
+- **User Registration:** Access `http://127.0.0.1:8000/register` to begin interacting with the application.
+- **User Login:** If you already have credentials, access `http://127.0.0.1:8000/login`.
 
 ### Scheduler Setup
 
