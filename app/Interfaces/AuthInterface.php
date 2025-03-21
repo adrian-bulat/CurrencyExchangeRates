@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 
 interface AuthInterface
 {
-    public function registerUser(Request $request): JsonResponse;
-    public function loginUser(Request $request): JsonResponse;
-    public function logoutUser(): JsonResponse;
+    public function register(Request $request): JsonResponse;
+    public function login(Request $request): JsonResponse;
+    public function logout(): JsonResponse;
     public function getUser(): JsonResponse;
 }

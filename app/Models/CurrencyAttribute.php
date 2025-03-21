@@ -13,18 +13,18 @@ class CurrencyAttribute extends Model
     protected $primaryKey = 'iso';
     protected $timestamp = false;
     protected $fillable = [
+        'iso',
         'name',
         'code',
-        'iso',
     ];
 
     public function baseCurrencyRates()
     {
-        return $this->hasMany(ExchangeRate::class, 'base_currency', 'iso');
+        return $this->hasMany(ExchangeRate::class, 'base_id', 'id');
     }
 
     public function targetCurrencyRates()
     {
-        return $this->hasMany(ExchangeRate::class, 'target_currency', 'iso');
+        return $this->hasMany(ExchangeRate::class, 'target_id', 'id');
     }
 }

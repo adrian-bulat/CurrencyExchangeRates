@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Interfaces\ExchangeRateServiceInterface;
 use Illuminate\Http\Request;
-use App\Services\ExchangeRateService;
 use Symfony\Component\HttpFoundation\Response;
 
 class ExchangeRateController extends Controller
 {
-    protected ExchangeRateService $exchangeRateService;
-
-    public function __construct(ExchangeRateService $exchangeRateService)
-    {
-        $this->exchangeRateService = $exchangeRateService;
+    public function __construct(
+        private readonly ExchangeRateServiceInterface $exchangeRateService
+    ) {
     }
 
     public function index(): Response

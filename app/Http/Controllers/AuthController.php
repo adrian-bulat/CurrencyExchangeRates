@@ -9,25 +9,24 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class AuthController extends Controller
 {
-    public AuthInterface $authService;
-    public function __construct(AuthInterface $authService)
-    {
-        $this->authService = $authService;
+    public function __construct(
+        private readonly AuthInterface $authService
+    ) {
     }
 
     public function register(Request $request): JsonResponse
     {
-        return $this->authService->registerUser($request);
+        return $this->authService->register($request);
     }
 
     public function login(Request $request): JsonResponse
     {
-        return $this->authService->loginUser($request);
+        return $this->authService->login($request);
     }
 
     public function logout(): JsonResponse
     {
-        return $this->authService->logoutUser();
+        return $this->authService->logout();
     }
 
     public function getUser(): JsonResponse

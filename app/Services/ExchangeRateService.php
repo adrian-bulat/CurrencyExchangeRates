@@ -2,26 +2,24 @@
 
 namespace App\Services;
 
+use App\Interfaces\ExchangeRateServiceInterface;
 use App\Interfaces\ExchangeRateUpdaterInterface;
 use App\Models\ExchangeRate;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class ExchangeRateService implements ExchangeRateUpdaterInterface
+class ExchangeRateService implements ExchangeRateUpdaterInterface, ExchangeRateServiceInterface
 {
-    public const BASE = 1;
+    public const BASE_EXCHANGE_VALUE = 1;
     public const DECIMALS = 2;
 
     public function __construct()
     {
     }
-    public function getAllExchangeRates($perPage = 10)
-    {
-        return ExchangeRate::paginate($perPage);
-    }
 
-    public function filterExchangeRates($filters, $perPage = 10)
+    public function filterExchangeRates(array $filters, int $perPage = 10): LengthAwarePaginator
     {
         $query = ExchangeRate::query()
             ->select(
@@ -61,29 +59,29 @@ class ExchangeRateService implements ExchangeRateUpdaterInterface
         return $query->paginate($perPage);
     }
 
-    public function updateOrInsertExchangeRates(array $validatedRates): void
+    public function updateOrInsertExchangeRates(array $rates): void
     {
         try {
             DB::beginTransaction();
 
             $currencies = array_unique(
-                array_merge([$validatedRates['base_currency']], array_keys($validatedRates['rates']))
+                array_merge([$rates['base_currency']], array_keys($rates['rates']))
             );
 
             info("Processing exchange rates for currencies: " . implode(', ', $currencies));
 
             $currencyAttributes = self::getCurrencyId($currencies);
 
-            $storeData = self::removeUnsupportedCurrencies($currencyAttributes, $currencies, $validatedRates);
+            $storeData = self::removeUnsupportedCurrencies($currencyAttributes, $currencies, $rates);
 
             info("Currency attributes after removal: " . implode(', ', $currencyAttributes));
 
             foreach ($storeData['rates'] as $isoCurrency => $rate) {
                 $baseCurrencyId = $currencyAttributes[$storeData['base_currency']];
-                $convertedCurrency = round(self::BASE / $rate, self::DECIMALS);
+                $convertedCurrency = round(self::BASE_EXCHANGE_VALUE / $rate, self::DECIMALS);
                 $targetCurrencyId = $currencyAttributes[$isoCurrency];
                 $publishedDate = $storeData['published_date'];
-// TODO: Thinking to move below part till the end to Model: ExchangeRate in a separate function
+
                 DB::table('exchange_rate')->updateOrInsert(
                     [
                         'base_id' => $baseCurrencyId,
@@ -124,7 +122,7 @@ class ExchangeRateService implements ExchangeRateUpdaterInterface
     private static function removeUnsupportedCurrencies(
         array $currencyAttributes,
         array $currencies,
-        array $validatedRates): array
+        array $rates): array
     {
         foreach ($currencies as $currency) {
             if (!isset($currencyAttributes[$currency])) {
@@ -133,13 +131,13 @@ class ExchangeRateService implements ExchangeRateUpdaterInterface
                         'Currency %s is missing from currency_attribute table. Currency %s hase rate: %f',
                         $currency,
                         $currency,
-                        $validatedRates['rates'][$currency],
+                        $rates['rates'][$currency],
                     )
                 );
-                unset($validatedRates['rates'][$currency]);
+                unset($rates['rates'][$currency]);
             }
         }
 
-        return $validatedRates;
+        return $rates;
     }
 }

@@ -6,7 +6,7 @@ use App\Filament\Resources\ExchangeRateResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListExchangeRate extends ListRecords
+class ListExchangeRates extends ListRecords
 {
     protected static string $resource = ExchangeRateResource::class;
 

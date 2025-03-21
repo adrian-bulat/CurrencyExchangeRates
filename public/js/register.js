@@ -18,13 +18,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json().then(data => ({httpStatus: response.status, body: data}));
             }) // Parse the JSON response
             .then(({httpStatus, body}) => {
-                if (httpStatus === 201) {  // If status is 201, registration successful
-                    showAlert(body.message, 'success');  // Show success message
-                    localStorage.setItem("Authorization", `Bearer ${body.token}`);  // Save token
-                    window.location.href = "/exchange-rates";                      // Redirect to exchange-rates or another page
-                } else if (httpStatus === 400) {  // If status is 400, show errors
+                if (httpStatus === 201) {
+                    showAlert(body.message, 'success');
+                    localStorage.setItem("Authorization", `Bearer ${body.token}`);
+                    window.location.href = "/exchange-rates";
+                } else if (httpStatus === 400) {
                     try {
-                        body = JSON.parse(body);  // Try parsing JSON
+                        body = JSON.parse(body);
                     } catch (error) {
                         console.error("JSON parse error:", error);
                         return;

@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\CurrencyISO;
+use App\Enums\CurrencyISOEnum;
 use App\Interfaces\ExchangeRateUpdaterInterface;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
@@ -17,13 +17,13 @@ class SyncExchangeRateCommand extends Command
     private const API_TIMEOUT = 30;
     private const RETRY_ATTEMPTS = 5;
     private const RETRY_DELAY = 5000;
+    private const DEFAULT_ERROR_CODE = 'Unknown';
+    private const RATE_REGEX = '/^\d{1,12}(\.\d{1,6})?$/';
 
-    public ExchangeRateUpdaterInterface $exchangeRateUpdater;
-    public function __construct(ExchangeRateUpdaterInterface $exchangeRateUpdater)
-    {
+    public function __construct(
+        private readonly ExchangeRateUpdaterInterface $exchangeRateUpdater
+    ) {
         parent::__construct();
-
-        $this->exchangeRateUpdater = $exchangeRateUpdater;
     }
 
     /**
@@ -70,9 +70,6 @@ class SyncExchangeRateCommand extends Command
             $baseCurrency = config('currency.base_currency');
             $supportedCurrencies = config('currency.supported_currencies');
 
-            // TODO: Remove test url before push on GIT
-            // $url = 'https://api.apilayer.com/exchangerates_data/2025-03-19';
-
             $httpResponse = retry(
                 self::RETRY_ATTEMPTS,
                 function () use ($apiKey, $url, $baseCurrency, $supportedCurrencies) {
@@ -85,9 +82,17 @@ class SyncExchangeRateCommand extends Command
                 },
                 self::RETRY_DELAY,
             );
-                info($httpResponse);
+
+            $this->info(
+                sprintf(
+                    'Command: %s - API response: %s',
+                    __METHOD__,
+                    $httpResponse
+                )
+            );
+
             if ($httpResponse->failed()) {
-                $errorCode = $httpResponse->json()['error']['code'] ?? 'unknown';
+                $errorCode = $httpResponse->json()['error']['code'] ?? self::DEFAULT_ERROR_CODE;
                 $this->error(
                     sprintf(
                         'Command: %s - Failed to fetch exchange rates. Error code: %s.',
@@ -130,7 +135,7 @@ class SyncExchangeRateCommand extends Command
             'base_currency' => $exchangeRatesData['base'],
             'published_date' => $exchangeRatesData['date'],
         ], [
-            'base_currency' => ['required', 'string', new Enum(CurrencyISO::class)],
+            'base_currency' => ['required', 'string', new Enum(CurrencyISOEnum::class)],
             'published_date' => ['required', 'date', 'date_format:Y-m-d'],
         ]);
 
@@ -152,14 +157,12 @@ class SyncExchangeRateCommand extends Command
         $validatedRates['published_date'] = $exchangeRatesData['date'];
 
         foreach ($exchangeRatesData['rates'] as $currencyISO => $exchangeRate) {
-        // TODO: Remove before push on GIT
-            // $rateValidator =
             Validator::make([
                 'target_currency' => $currencyISO,
                 'rate' => $exchangeRate,
             ], [
-                'target_currency' => ['required', 'string', new Enum(CurrencyISO::class)],
-                'rate' => ['required', 'numeric', 'regex:/^\d{1,12}(\.\d{1,6})?$/', 'gt:0'],
+                'target_currency' => ['required', 'string', new Enum(CurrencyISOEnum::class)],
+                'rate' => ['required', 'numeric', 'regex:' . self::RATE_REGEX, 'gt:0'],
             ]);
 
             if ($validator->fails()) {

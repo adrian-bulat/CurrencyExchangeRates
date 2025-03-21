@@ -1,21 +1,15 @@
-// Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.querySelector('.login-form');
 
-    // Add an event listener for form submission
     loginForm.addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent form from submitting immediately
+        event.preventDefault();
 
-        // Get the email and password values
         const email = document.getElementById('email').value;
         const password = document.getElementById('current-password').value;
 
-        // Simple form validation
         if (email === '' || password === '') {
             alert('Please fill in both fields.');
             return;
-
-            // You can add additional checks here, like email format or password length
         }
 
         fetch("http://127.0.0.1:8000/login", {
@@ -25,15 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
         })
             .then(response => {
                 return response.json().then(data => ({httpStatus: response.status, body: data}));
-            }) // Parse the JSON response
+            })
             .then(({httpStatus, body}) => {
-                if (httpStatus === 200) {  // If status is 200, login successful
-                    showAlert(body.message, 'success');  // Show success message
-                    localStorage.setItem("Authorization", `Bearer ${body.token}`);  // Save token
-                    window.location.href = "/exchange-rates";                      // Redirect to exchange-rates or another page
-                } else if (httpStatus === 400 || httpStatus === 401) {  // If status is 400/401, show errors
+                if (httpStatus === 200) {
+                    showAlert(body.message, 'success');
+                    localStorage.setItem("Authorization", `Bearer ${body.token}`);
+                    window.location.href = "/exchange-rates";
+                } else if (httpStatus === 400 || httpStatus === 401) {
                     try {
-                        body = JSON.parse(body);  // Try parsing JSON
+                        body = JSON.parse(body);
                     } catch (error) {
                         console.error("JSON parse error:", error);
                         return;

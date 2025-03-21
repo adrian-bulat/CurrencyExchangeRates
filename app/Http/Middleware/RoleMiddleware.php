@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
+// TODO: optional - Implement roles
+
 class RoleMiddleware
 {
     /**

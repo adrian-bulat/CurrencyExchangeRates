@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     perPageSelect.addEventListener("change", () => fetchData());
 
-    fetchData(); // Initial fetch
+    fetchData();
 
     function fetchData(page = 1) {
         const filters = {
@@ -35,8 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 setupPagination(data);
             })
             .catch(error => console.error("Error fetching data:", error));
-        // localStorage.removeItem("Authorization");
-        // window.location.href = "/login";
     }
 
     function populateTable(data) {
@@ -79,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function getSelectedCurrencies() {
         return Array.from(document.querySelectorAll('#by-currency input[type=checkbox]:checked'))
             .map(input => input.id.toUpperCase())
-            .join(","); // Convert array to comma-separated string
+            .join(",");
     }
 });
 
@@ -108,33 +106,27 @@ currencies.forEach(currency => {
     container.appendChild(checkboxRow);
 });
 
-//check if logged in
 document.addEventListener("DOMContentLoaded", function () {
     const loginBtn = document.getElementById("btn-login");
     const registerBtn = document.getElementById("btn-register");
     const logoutBtn = document.getElementById("btn-logout");
 
     function checkAuth() {
-        // const token = sessionStorage.getItem("Authorization"); // 🔹 Get token from local storage
-        const token = localStorage.getItem("Authorization"); // 🔹 Get token from local storage
+        const token = localStorage.getItem("Authorization");
 
         if (token) {
-            // User is authenticated
             logoutBtn.style.display = "block";
             loginBtn.style.display = "none";
             registerBtn.style.display = "none";
         } else {
-            // User is not authenticated
             logoutBtn.style.display = "none";
             loginBtn.style.display = "block";
             registerBtn.style.display = "block";
         }
     }
 
-    // Call function on page load
     checkAuth();
 
-    // 🔹 Logout logic
     logoutBtn.addEventListener("click", function () {
         const token = localStorage.getItem("Authorization");
 
@@ -145,13 +137,13 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then(response => {
                 return response.json().then(data => ({httpStatus: response.status, body: data}));
-            }) // Parse the JSON response
+            })
             .then(({httpStatus, body}) => {
-                if (httpStatus === 200) {  // If status is 200, logout successful
-                    showAlert(body.message, 'success');  // Show success message
+                if (httpStatus === 200 || httpStatus === 401) {
+                    showAlert(body.message, 'success');
                     localStorage.removeItem("Authorization");
                     checkAuth(); // Update UI
-                    window.location.href = "/login";                      // Redirect to log in or another page
+                    window.location.href = "/login";
                 } else {
                     try {
                         body = JSON.parse(body);  // Try parsing JSON
@@ -170,10 +162,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error:', error);
                 showAlert('An error occurred while processing your request.', 'error');
             });
-
-        // localStorage.removeItem("Authorization");
-        // checkAuth(); // Update UI
-        // window.location.href = "/login";
     });
 
     // Login
@@ -188,13 +176,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// Get radio buttons and forms
 const formRadioFixed = document.getElementById('form-radio-date-fixed');
 const formRadioRange = document.getElementById('form-radio-date-range');
 const dateFixed = document.getElementById('date-fixed');
 const dateRange = document.getElementById('date-range');
 
-// Event listener to show/hide forms based on selected radio button
 formRadioFixed.addEventListener('change', () => {
     if (formRadioFixed.checked) {
         dateRange.style.display = 'none';

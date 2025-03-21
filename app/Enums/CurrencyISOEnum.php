@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum CurrencyISO: string
+enum CurrencyISOEnum: string
 {
     case AED = 'AED';
     case ALL = 'ALL';

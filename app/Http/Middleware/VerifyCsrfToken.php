@@ -16,6 +16,6 @@ class VerifyCsrfToken extends Middleware
         '/login',
         '/exchange-rates',
         '/exchange-rates/filter',
-        '/logout'
+        '/logout',
     ];
 }

@@ -14,7 +14,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService implements AuthInterface
 {
-    public function registerUser(Request $request): JsonResponse
+    public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|alpha|max:255',
@@ -38,7 +38,7 @@ class AuthService implements AuthInterface
         return response()->json(compact('token', 'message'), Response::HTTP_CREATED);
     }
 
-    public function loginUser(Request $request): JsonResponse
+    public function login(Request $request): JsonResponse
     {
         $message = 'Logged in successfully';
         $credentials = $request->only('email', 'password');
@@ -50,31 +50,36 @@ class AuthService implements AuthInterface
 
         if($validator->fails()){
             info(response()->json($validator->errors()->toJson(), Response::HTTP_BAD_REQUEST));
+
             return response()->json($validator->errors()->toJson(), Response::HTTP_BAD_REQUEST);
         }
 
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
                 info(response()->json(['error' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED));
+
                 return response()->json(['error' => 'Invalid credentials'], Response::HTTP_UNAUTHORIZED);
             }
 
             $user = auth()->user();
 
-//            TODO: (optional - add role to JWT)
+//            TODO: (optional - add roles to JWT)
 //            $token = JWTAuth::claims(['role' => $user->role])->fromUser($user);
             info(response()->json(compact('user', 'token', 'message'), Response::HTTP_OK));
+
             return response()->json(compact('user', 'token', 'message'), Response::HTTP_OK);
         } catch (JWTException) {
             info(response()->json(['error' => 'Could not create token'], Response::HTTP_INTERNAL_SERVER_ERROR));
+
             return response()->json(['error' => 'Could not create token'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-    public function logoutUser(): JsonResponse
+    public function logout(): JsonResponse
     {
         $token = JWTAuth::getToken();
         JWTAuth::invalidate($token);
+
         return response()->json(['message' => 'Logged out successfully'], Response::HTTP_OK);
     }
 

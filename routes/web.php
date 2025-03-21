@@ -1,9 +1,6 @@
 <?php
 
-use App\Enums\RoleEnum;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ExchangeRateController;
-use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*

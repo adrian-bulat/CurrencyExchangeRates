@@ -3,19 +3,20 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ExchangeRateResource\Pages;
-use App\Filament\Resources\ExchangeRateResource\RelationManagers;
+use App\Models\CurrencyAttribute;
 use App\Models\ExchangeRate;
-use DeepCopy\TypeFilter\Date\DatePeriodFilter;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TextFilter;
-
 
 class ExchangeRateResource extends Resource
 {
@@ -23,49 +24,57 @@ class ExchangeRateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    public static function form(Form $form): Form
+    public static function form(Forms\Form $form): Forms\Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('base_currency')->required(),
-                Forms\Components\TextInput::make('target_currency')->required(),
-                Forms\Components\TextInput::make('exchange_rate')
+                Select::make('base_id')
+                    ->label('Base Currency')
+                    ->options(CurrencyAttribute::pluck('name','id'))
+                    ->searchable()
+                    ->required(),
+
+                Select::make('target_id')
+                    ->label('Target Currency')
+                    ->options(CurrencyAttribute::pluck('name', 'id'))
+                    ->searchable()
+                    ->required(),
+
+                TextInput::make('rate')
                     ->numeric()
                     ->required(),
-//                Forms\Components\DatePicker::make('created_at')
-//                    ->disabled(),
+
+                DatePicker::make('published_date')
+                    ->required(),
             ]);
     }
 
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('base_currency')
+                TextColumn::make('baseCurrency.name')
                     ->label('Currency'),
-                Tables\Columns\TextColumn::make('exchange_rate'),
-                Tables\Columns\TextColumn::make('target_currency'),
-                Tables\Columns\TextColumn::make('created_at')->dateTime(),
-            ])
-            ->filters([
-                Tables\Filters\SelectFilter::make('base_currency')
-                    ->options(ExchangeRate::pluck('base_currency', 'base_currency')->unique()->toArray())
-                    ->label('Base Currency'),
-                Tables\Filters\SelectFilter::make('target_currency')
-                    ->options(ExchangeRate::pluck('target_currency', 'target_currency')->unique()->toArray())
+
+                TextColumn::make('targetCurrency.name')
                     ->label('Target Currency'),
-//                DatePeriodFilter::apply('created_at')
-//                    ->label('Created At')
-//                    ->placeholder('Filter by date'),
+
+                TextColumn::make('rate')
+                    ->sortable(),
+
+                TextColumn::make('published_date')
+                    ->label('Published Date')
+                    ->date()
+                    ->sortable(),
 
             ])
+            ->filters([])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 
@@ -79,7 +88,7 @@ class ExchangeRateResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListExchangeRate::route('/'),
+            'index' => Pages\ListExchangeRates::route('/'),
             'create' => Pages\CreateExchangeRate::route('/create'),
             'edit' => Pages\EditExchangeRate::route('/{record}/edit'),
         ];

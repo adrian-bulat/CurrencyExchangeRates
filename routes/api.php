@@ -25,9 +25,8 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware([JwtMiddleware::class])->group(function () {
     Route::get('user', [AuthController::class, 'getUser']);
-    Route::post('logout', [AuthController::class, 'logout']);
     Route::get('/exchange-rates/filter', [ExchangeRateController::class, 'filter']);
+    Route::post('logout', [AuthController::class, 'logout']);
 });
 
 Route::get('/exchange-rates', [ExchangeRateController::class, 'index']);
-
