@@ -1,5 +1,9 @@
 <?php
 
+use App\Enums\RoleEnum;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ExchangeRateController;
+use App\Http\Middleware\JwtMiddleware;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +20,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/register', [AuthController::class, 'showRegisterForm']);
+Route::get('/login', [AuthController::class, 'showLoginForm']);
