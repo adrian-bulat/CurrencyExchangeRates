@@ -12,8 +12,10 @@ class ExchangeRateSeeder extends Seeder
         $upToDaysAgo = 8;
         $maxTargetCurrencyId = 7;
         $rates = [];
-
-        /* Make sure that array keys are same as ID's in currency_attribute table */
+        
+        /**
+        * Make sure that array keys are same as ID's in currency_attribute table
+        */
         $currencyRate = [
             1 => fn() => 1,
             2 => fn() => "19." . random_int(5,40),
