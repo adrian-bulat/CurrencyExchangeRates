@@ -13,7 +13,9 @@ class ExchangeRateSeeder extends Seeder
         $maxTargetCurrencyId = 7;
         $rates = [];
 
-        $array = [
+        /* Make sure that array keys are same as ID's in currency_attribute table */
+        $currencyRate = [
+            1 => fn() => 1,
             2 => fn() => "19." . random_int(5,40),
             3 => fn() => "23." . random_int(20,30),
             4 => fn() => "3." . random_int(50,99),
@@ -27,7 +29,7 @@ class ExchangeRateSeeder extends Seeder
                 $rates[] = [
                     'base_id' => 1,
                     'target_id' => $targetCurrencyId,
-                    'rate' => $array[$targetCurrencyId](),
+                    'rate' => $currencyRate[$targetCurrencyId](),
                     'published_date' => now()->subDays($currentDay),
                     'created_at' => now()->subDays($currentDay),
                     'updated_at' => null,
