@@ -7,12 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class ExchangeRateSeeder extends Seeder
 {
+    const BACKFILL_DAYS = 8;
+    const MAX_TARGET_CURRENCY_ID = 7;
+
     public function run(): void
     {
-        $upToDaysAgo = 8;
-        $maxTargetCurrencyId = 7;
         $rates = [];
-        
+
         /**
         * Make sure that array keys are same as ID's in currency_attribute table
         */
@@ -26,8 +27,8 @@ class ExchangeRateSeeder extends Seeder
             7 => fn() => "18." . random_int(0,50),
         ];
 
-        for ($currentDay = 0; $currentDay < $upToDaysAgo; $currentDay++) {
-            for ($targetCurrencyId = 2; $targetCurrencyId <= $maxTargetCurrencyId; $targetCurrencyId++) {
+        for ($currentDay = 0; $currentDay < self::BACKFILL_DAYS; $currentDay++) {
+            for ($targetCurrencyId = 2; $targetCurrencyId <= self::MAX_TARGET_CURRENCY_ID; $targetCurrencyId++) {
                 $rates[] = [
                     'base_id' => 1,
                     'target_id' => $targetCurrencyId,
