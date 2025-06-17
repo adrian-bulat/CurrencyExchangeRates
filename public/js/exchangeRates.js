@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     window.location.href = "/login";
                 } else {
                     try {
-                        body = JSON.parse(body);  // Try parsing JSON
+                        body = JSON.parse(body);
                     } catch (error) {
                         console.error("JSON parse error:", error);
                         return;

@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\DB;
 
 class ExchangeRateSeeder extends Seeder
 {
-    const BACKFILL_DAYS = 8;
-    const MAX_TARGET_CURRENCY_ID = 7;
+    public const BACKFILL_DAYS = 8;
+    public const MAX_TARGET_CURRENCY_ID = 7;
 
     public function run(): void
     {

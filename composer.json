@@ -9,15 +9,32 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "bpampuch/pdfmake": "^0.2.20",
+        "components/jquery": "^3.7",
+        "datatables.net/datatables.net-buttons-dt": "^3.2",
+        "datatables.net/datatables.net-colreorder-dt": "^2.1",
+        "datatables.net/datatables.net-datetime": "^1.5",
+        "datatables.net/datatables.net-dt": "^2.3",
+        "datatables.net/datatables.net-fixedcolumns-dt": "^5.0",
+        "datatables.net/datatables.net-fixedheader-dt": "^4.0",
+        "datatables.net/datatables.net-responsive-dt": "^3.0",
+        "datatables.net/datatables.net-rowreorder-dt": "^1.5",
+        "datatables.net/datatables.net-scroller-dt": "^2.4",
+        "datatables.net/datatables.net-searchbuilder-dt": "^1.8",
+        "datatables.net/datatables.net-searchpanes-dt": "^2.3",
         "filament/filament": "^3.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.6",
-        "tymon/jwt-auth": "^2.2"
+        "stuk/jszip": "^3.0",
+        "tymon/jwt-auth": "^2.2",
+        "yajra/laravel-datatables-oracle": "^10.3.1"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest"
+        ,
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",

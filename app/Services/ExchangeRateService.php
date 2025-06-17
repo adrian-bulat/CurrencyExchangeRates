@@ -9,6 +9,8 @@ use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Http\JsonResponse;
 
 class ExchangeRateService implements ExchangeRateUpdaterInterface, ExchangeRateServiceInterface
 {
@@ -19,7 +21,7 @@ class ExchangeRateService implements ExchangeRateUpdaterInterface, ExchangeRateS
     {
     }
 
-    public function filterExchangeRates(array $filters, int $perPage = 10): LengthAwarePaginator
+    public function filterExchangeRates(array $filters, int $perPage = 10): JsonResponse
     {
         $query = ExchangeRate::query()
             ->select(
@@ -56,7 +58,7 @@ class ExchangeRateService implements ExchangeRateUpdaterInterface, ExchangeRateS
 
         $query->orderBy('exchange_rate.published_date', 'ASC');
 
-        return $query->paginate($perPage);
+        return DataTables::of($query)->make(true);
     }
 
     public function updateOrInsertExchangeRates(array $rates): void
