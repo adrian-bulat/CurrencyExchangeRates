@@ -27,8 +27,33 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         columns: [
             { data: 'target_currency', name: 'target_currency' },
-            { data: 'rate', name: 'rate' },
-            { data: 'published_date', name: 'published_date' }
+            {
+                data: null,
+                name: 'rate',
+                title: 'Exchange Rate',
+                render: {
+                    display: function (data, type, row) {
+                        return `
+                            <div class="rate-cell">
+                                <div class="rate-value">${row.rate}</div>
+                                <div class="rate-base">${row.base_currency}</div>
+                            </div>
+                        `;
+                    },
+                    sort: function (data, type, row) {
+                        return parseFloat(row.rate); // use the numeric rate for sorting
+                    }
+                }
+            },
+            { data: 'published_date', name: 'published_date', visible: false }
+        ],
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                extend: 'colvis',
+                text: 'Show/Hide Columns',
+                collectionLayout: 'fixed two-column'
+            }
         ],
         pageLength: 10
     });
