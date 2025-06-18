@@ -1,4 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Initialize Select2 V3
+    $('#columnSelector').select2({
+        placeholder: 'Select columns to show',
+        closeOnSelect: false,
+        width: 'resolve'
+    });
+
+
     let table = $('#exchangeRatesTable').DataTable({
         processing: true,
         serverSide: true,
@@ -47,14 +55,14 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             { data: 'published_date', name: 'published_date', visible: false }
         ],
-        dom: 'Bfrtip',
-        buttons: [
-            {
-                extend: 'colvis',
-                text: 'Show/Hide Columns',
-                collectionLayout: 'fixed two-column'
-            }
-        ],
+        // dom: 'Bfrtip',
+        // buttons: [
+        //     {
+        //         extend: 'colvis',
+        //         text: 'Show/Hide Columns',
+        //         collectionLayout: 'fixed two-column'
+        //     }
+        // ],
         pageLength: 10
     });
 
@@ -68,6 +76,39 @@ document.addEventListener("DOMContentLoaded", function () {
         e.preventDefault();
         table.ajax.reload();
     });
+    // V1
+    // $('.toggle-col').on('change', function () {
+    //     let columnIndex = $(this).data('col');
+    //     let column = table.column(columnIndex);
+    //     column.visible(!column.visible());
+    // });
+
+    // V2
+    // Toggle column visibility using the multi-select
+    // $('#columnSelector').on('change', function () {
+    //     let selected = $(this).val(); // array of selected column indexes
+    //
+    //     $('#columnSelector option').each(function () {
+    //         let colIndex = $(this).val();
+    //         let isSelected = selected.includes(colIndex);
+    //         table.column(colIndex).visible(isSelected);
+    //     });
+    // });
+
+    // V3
+    $('#columnSelector').on('change', function () {
+        let selected = $(this).val(); // array of selected column indexes
+
+        $('#columnSelector option').each(function () {
+            let colIndex = $(this).val();
+            let isVisible = selected.includes(colIndex);
+            table.column(colIndex).visible(isVisible);
+        });
+    });
+
+    // Initial visibility setup V3
+    $('#columnSelector').trigger('change');
+// });
 
 });
 

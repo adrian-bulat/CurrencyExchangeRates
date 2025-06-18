@@ -8,6 +8,8 @@
 {{--    <script src="{{ url('js/exchangeRates.js') }}" defer></script>--}}
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 </head>
 <body>
 <header>
@@ -53,6 +55,29 @@
 {{--            </select>--}}
 {{--        </div>--}}
 
+{{--        V1--}}
+{{--        <label><input type="checkbox" class="toggle-col" data-col="0" checked>Currency</label>--}}
+{{--        <label><input type="checkbox" class="toggle-col" data-col="1" checked>Exchange Rate</label>--}}
+{{--        <label><input type="checkbox" class="toggle-col" data-col="2">Date</label>--}}
+
+{{--        V2--}}
+{{--        <label for="columnSelector">Show/Hide Columns:</label>--}}
+{{--        <select id="columnSelector" multiple>--}}
+{{--            <option value="0" selected>Currency</option>--}}
+{{--            <option value="1" selected>Exchange Rate</option>--}}
+{{--            <option value="2" selected>Date</option>--}}
+{{--        </select>--}}
+{{--        V3 uses slect2--}}
+{{--        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />--}}
+{{--        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>--}}
+
+        <label for="columnSelector">Show/Hide Columns:</label>
+        <select id="columnSelector" multiple="multiple" style="width: 250px;">
+            <option value="0" selected>Currency</option>
+            <option value="1" selected>Exchange Rate</option>
+            <option value="2" selected>Date</option>
+        </select>
+
         <table id="exchangeRatesTable" class="display nowrap" style="width:100%">
             <thead>
             <tr>
@@ -72,6 +97,7 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{{ url('js/dataTables.js') }}" defer></script>
 </body>
 </html>
