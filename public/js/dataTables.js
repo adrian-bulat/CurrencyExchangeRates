@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const savedPerPage = localStorage.getItem('recordsPerPage') || 10;
     document.querySelector(`input[name="recordsPerPage"][value="${savedPerPage}"]`).checked = true;
     table.page.len(savedPerPage).draw();
-
+    recBtn.textContent = `Records per page (${savedPerPage || 10})`;
     // perpageEnd
 
     // show/hide cols Start
@@ -141,27 +141,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     updateColumnBtnLabel(); // Reflect initial visible/total
 
-    function formatOptionWithCheckbox(option) {
-        if (!option.id) return option.text;
-
-        const selectedValues = $('#columnSelector').val() || [];
-        const checked = selectedValues.includes(option.id) ? 'checked' : '';
-
-        return $(`
-                    <div class="select2-option-row">
-                        <span>${option.text}</span>
-                        <input type="checkbox" disabled ${checked} />
-                    </div>
-                `);
-    }
-
     function updateColumnBtnLabel() {
         const checkboxes = document.querySelectorAll('#columnDropdown input[type="checkbox"]');
         const total = checkboxes.length;
         const selected = Array.from(checkboxes).filter(cb => cb.checked).length;
         document.getElementById('toggleColumnsBtn').textContent = `Show/Hide cols (${selected}/${total})`;
     }
-
     // show/hide cols End
 
 
