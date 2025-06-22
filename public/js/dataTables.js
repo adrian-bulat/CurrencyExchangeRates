@@ -1,16 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Initialize Select2 V3
-    $('#columnSelector').select2({
-        placeholder: 'Select columns to show',
-        closeOnSelect: false,
-        width: 'resolve'
-    });
-
-
     let table = $('#exchangeRatesTable').DataTable({
         processing: true,
         serverSide: true,
         searching: false,
+        lengthChange: false,
         ajax: {
             url: "/api/exchange-rates/filter",
             data: function (d) {
@@ -66,49 +59,112 @@ document.addEventListener("DOMContentLoaded", function () {
         pageLength: 10
     });
 
-    // Change page length
-    $('#perPage').on('change', function () {
-        table.ajax.reload();
-    });
-
     // Apply filters
     $('#applyFilters').on('click', function (e) {
         e.preventDefault();
         table.ajax.reload();
     });
-    // V1
-    // $('.toggle-col').on('change', function () {
-    //     let columnIndex = $(this).data('col');
-    //     let column = table.column(columnIndex);
-    //     column.visible(!column.visible());
-    // });
 
-    // V2
-    // Toggle column visibility using the multi-select
-    // $('#columnSelector').on('change', function () {
-    //     let selected = $(this).val(); // array of selected column indexes
-    //
-    //     $('#columnSelector option').each(function () {
-    //         let colIndex = $(this).val();
-    //         let isSelected = selected.includes(colIndex);
-    //         table.column(colIndex).visible(isSelected);
-    //     });
-    // });
+    // btns
+    // perPage start
+    // Show/hide the records dropdown
+    const recBtn = document.getElementById('toggleRecordsBtn');
+    const recDropdown = document.getElementById('recordsDropdown');
 
-    // V3
-    $('#columnSelector').on('change', function () {
-        let selected = $(this).val(); // array of selected column indexes
+    recBtn.addEventListener('click', () => {
+        recDropdown.style.display = recDropdown.style.display === 'block' ? 'none' : 'block';
+    });
 
-        $('#columnSelector option').each(function () {
-            let colIndex = $(this).val();
-            let isVisible = selected.includes(colIndex);
-            table.column(colIndex).visible(isVisible);
+    // Close dropdown if clicking outside
+    document.addEventListener('click', function (e) {
+        if (!recDropdown.contains(e.target) && !recBtn.contains(e.target)) {
+            recDropdown.style.display = 'none';
+        }
+    });
+
+    recDropdown.querySelectorAll('input[name="recordsPerPage"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const value = parseInt(this.value);
+            const table = $('#exchangeRatesTable').DataTable();
+
+            // Update table page length
+            table.page.len(value).draw();
+
+            // Update button label
+            recBtn.textContent = `Records per page (${value})`;
+
+            // Optional: save user preference
+            localStorage.setItem('recordsPerPage', value);
         });
     });
 
-    // Initial visibility setup V3
-    $('#columnSelector').trigger('change');
-// });
+    // On load
+    const savedPerPage = localStorage.getItem('recordsPerPage') || 10;
+    document.querySelector(`input[name="recordsPerPage"][value="${savedPerPage}"]`).checked = true;
+    table.page.len(savedPerPage).draw();
+
+    // perpageEnd
+
+    // show/hide cols Start
+    // Show/hide dropdown
+    const toggleBtn = document.getElementById('toggleColumnsBtn');
+    const dropdown = document.getElementById('columnDropdown');
+
+    toggleBtn.addEventListener('click', () => {
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    // Close dropdown if clicking outside
+    document.addEventListener('click', function (e) {
+        if (!dropdown.contains(e.target) && !toggleBtn.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+    // Handle column visibility
+    dropdown.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const colIndex = parseInt(this.getAttribute('data-col'));
+            const column = $('#exchangeRatesTable').DataTable().column(colIndex);
+            column.visible(this.checked);
+            updateColumnBtnLabel(); // 👈 update the label
+        });
+    });
+    // Sync checkboxes with column visibility
+    dropdown.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        const colIndex = parseInt(checkbox.getAttribute('data-col'));
+        checkbox.checked = table.column(colIndex).visible();
+    });
+
+// ✅ Optional Enhancement: Sync Checkboxes with Table on Load
+    document.querySelectorAll('#columnDropdown input[type="checkbox"]').forEach(cb => {
+        const colIndex = parseInt(cb.getAttribute('data-col'));
+        cb.checked = table.column(colIndex).visible();
+    });
+    updateColumnBtnLabel(); // Reflect initial visible/total
+
+    function formatOptionWithCheckbox(option) {
+        if (!option.id) return option.text;
+
+        const selectedValues = $('#columnSelector').val() || [];
+        const checked = selectedValues.includes(option.id) ? 'checked' : '';
+
+        return $(`
+                    <div class="select2-option-row">
+                        <span>${option.text}</span>
+                        <input type="checkbox" disabled ${checked} />
+                    </div>
+                `);
+    }
+
+    function updateColumnBtnLabel() {
+        const checkboxes = document.querySelectorAll('#columnDropdown input[type="checkbox"]');
+        const total = checkboxes.length;
+        const selected = Array.from(checkboxes).filter(cb => cb.checked).length;
+        document.getElementById('toggleColumnsBtn').textContent = `Show/Hide cols (${selected}/${total})`;
+    }
+
+    // show/hide cols End
+
+
 
 });
 

@@ -149,3 +149,57 @@ footer {
     display: flex;
     flex-direction: row;
 }
+
+
+/*//------//*/
+
+/* Dark dropdown theme */
+.select2-container .select2-dropdown {
+    background-color: #2b2b2b;
+    color: #f0f0f0;
+    border: 1px solid #444;
+}
+
+/* Option row layout */
+.select2-option-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px;
+}
+
+/* Checkbox styling */
+.select2-option-row input[type="checkbox"] {
+    accent-color: #4caf50; /* green tick */
+    pointer-events: none;
+}
+
+/* Custom button */
+.col-btn {
+    padding: 6px 12px;
+    background-color: #444;
+    color: white;
+    border: 1px solid #666;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.col-btn:hover {
+    background-color: #555;
+}
+
+#columnSelector + .select2-container .select2-selection {
+    display: none !important;
+}
+
+#toggleColumnsBtn {
+    border: 1px solid #585757;
+    border-radius: 8px;
+    background-color: #1a1a1b;
+    color: #585757;
+}
+
+
+
+
